@@ -1,31 +1,37 @@
-# Encuesta de satisfacción estudiantil
+# Encuesta de satisfacción estudiantil · ITSQMET
 
-Sistema con dos accesos públicos:
+Sistema institucional con dos accesos:
 
 - Estudiantes: https://jeffer91.github.io/calificaci-n/estudiantes/
 - Administrador: https://jeffer91.github.io/calificaci-n/administrador/
 
+## Flujo del estudiante
+
+1. Ingresa su cédula.
+2. La aplicación consulta sus datos institucionales en Firebase UTET.
+3. Puede registrar de forma independiente:
+   - **Lo que hicieron bien:** 0, 1 o máximo 2 áreas.
+   - **Lo que podemos mejorar:** 0, 1 o máximo 2 áreas.
+4. El comentario positivo es opcional: el estudiante puede reconocer un área únicamente seleccionando la calificación y los puntos destacados.
+5. Revisa y envía.
+
 ## Arquitectura
 
-- GitHub Pages: interfaz.
+- GitHub Pages: interfaz pública.
 - Firebase UTET / Firestore: consulta del estudiante por cédula.
-- Neon Postgres: almacenamiento de encuestas y evaluaciones.
-- Neon Functions + AI Gateway: clasificación automática de comentarios.
+- Neon Postgres: almacenamiento de encuestas.
+- Neon Functions + AI Gateway: clasificación automática y organización de comentarios.
 - IA principal: gpt-oss-20b.
 - IA de respaldo: meta-llama-3.3-70b-instruct.
 
-## Flujo estudiante
+## Administrador
 
-Cédula → datos automáticos desde Firestore → búsqueda predictiva de área → calificación → problemas por categorías → comentario → envío.
+El panel separa reconocimientos de aspectos por mejorar, muestra estadísticas por área, categorías frecuentes, filtros, comentarios individuales y análisis de IA.
 
-## Panel administrador
+## Privacidad
 
-Incluye indicadores, promedio de satisfacción, casos críticos detectados por IA, estadísticas por área, problemas frecuentes, filtros y respuestas individuales.
-
-## Seguridad
-
-La cédula no se almacena en texto plano en Neon: la función guarda un hash. Los datos de contacto solo se guardan cuando el estudiante solicita seguimiento. La conexión a Neon y las credenciales de IA permanecen en el backend.
+La cédula no se almacena en texto plano en Neon: se guarda un hash. Los datos de contacto se guardan únicamente si el estudiante solicita seguimiento.
 
 ## Backend
 
-El código está en backend/. Para activarlo hay que desplegar la función en el proyecto Neon, ejecutar backend/schema.sql y colocar la URL resultante en assets/config.js.
+El código está en backend/. Para activar el almacenamiento real y la IA se debe desplegar la función en Neon, ejecutar backend/schema.sql y colocar la URL de la función en assets/config.js.
