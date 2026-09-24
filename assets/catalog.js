@@ -17,3 +17,5 @@ export const AREAS = [
 export const RATINGS=[{value:1,label:"Muy mala",emoji:"😠"},{value:2,label:"Mala",emoji:"🙁"},{value:3,label:"Regular",emoji:"😐"},{value:4,label:"Buena",emoji:"🙂"},{value:5,label:"Excelente",emoji:"😄"}];
 export function normalizeText(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();}
 export function searchAreas(query){const q=normalizeText(query);if(!q)return AREAS.slice(0,8);return AREAS.filter(a=>normalizeText([a.name].concat(a.aliases).join(" ")).includes(q)).slice(0,8);}
+
+export const POSITIVE_TAGS=["Buena atención","Rapidez","Información clara","Solución efectiva","Amabilidad","Buen seguimiento","Facilidad del proceso","Otro"];
