@@ -1,0 +1,12 @@
+{
+  "name": "satisfaccion-neon-backend",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@neon/ai-sdk-provider": "latest",
+    "@neon/functions": "latest",
+    "ai": "^7.0.0",
+    "hono": "latest",
+    "pg": "latest"
+  }
+}
