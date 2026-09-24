@@ -18,6 +18,7 @@ CREATE INDEX IF NOT EXISTS surveys_created_at_idx ON surveys(created_at DESC);
 CREATE TABLE IF NOT EXISTS evaluations (
   id bigserial PRIMARY KEY,
   survey_id uuid NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+  experience_type text NOT NULL DEFAULT 'general',
   area_key text NOT NULL,
   area_name text NOT NULL,
   rating smallint NOT NULL CHECK (rating BETWEEN 1 AND 5),
@@ -35,7 +36,10 @@ CREATE TABLE IF NOT EXISTS evaluations (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE evaluations ADD COLUMN IF NOT EXISTS experience_type text NOT NULL DEFAULT 'general';
+
 CREATE INDEX IF NOT EXISTS evaluations_survey_id_idx ON evaluations(survey_id);
 CREATE INDEX IF NOT EXISTS evaluations_area_key_idx ON evaluations(area_key);
+CREATE INDEX IF NOT EXISTS evaluations_experience_type_idx ON evaluations(experience_type);
 CREATE INDEX IF NOT EXISTS evaluations_created_at_idx ON evaluations(created_at DESC);
 CREATE INDEX IF NOT EXISTS evaluations_rating_idx ON evaluations(rating);
