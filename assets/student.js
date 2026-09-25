@@ -28,6 +28,27 @@ function status(id,type,msg){$(id).innerHTML=msg?'<div class="status '+type+'">'
 function count(type){return state.evaluations.filter(x=>x.experienceType===type).length;}
 function labelType(type){return type==="positive"?"Reconocimiento":"Por mejorar";}
 
+async function checkBackend(){
+  if(!APP_CONFIG.apiBase){
+    status("systemStatus","warn","La encuesta todavía no está enlazada al servidor de envío.");
+    return false;
+  }
+  try{
+    const r=await fetch(APP_CONFIG.apiBase.replace(/\/$/,"")+"/health",{cache:"no-store"});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok&&j.database&&j.hashPepperConfigured){
+      status("systemStatus","ok","Sistema conectado y listo para recibir respuestas.");
+      return true;
+    }
+    status("systemStatus","warn","El servidor responde, pero la configuración todavía no está completa.");
+    return false;
+  }catch(_){
+    status("systemStatus","error","No se pudo verificar la conexión con el servidor.");
+    return false;
+  }
+}
+checkBackend();
+
 $("cedula").oninput=e=>e.target.value=e.target.value.replace(/\D/g,"").slice(0,10);
 $("studentForm").onsubmit=async e=>{
   e.preventDefault();
@@ -154,6 +175,10 @@ $("saveExperience").onclick=()=>{
   if(!state.rating){status("experienceStatus","error","Selecciona una calificación.");return;}
   if(state.mode==="improvement"&&!state.resolution){status("experienceStatus","error","Indica si el problema fue solucionado.");return;}
   if(count(state.mode)>=2){status("experienceStatus","warn","Ya registraste el máximo de 2 áreas en este bloque.");return;}
+  if(state.evaluations.some(x=>x.experienceType===state.mode&&x.areaKey===state.area.key)){
+    status("experienceStatus","warn","Esta área ya está registrada en este bloque.");
+    return;
+  }
 
   state.evaluations.push({
     experienceType:state.mode,
