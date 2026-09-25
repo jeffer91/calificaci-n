@@ -120,7 +120,8 @@ function renderResponses(){
     const positive=r.experience_type==="positive";
     const type='<span class="type-badge '+(positive?"positive":"improvement")+'">'+typeLabel(r.experience_type)+'</span>';
     const sev=r.ai_severity?'<span class="pill '+(r.ai_severity==="alta"?"bad":r.ai_severity==="baja"?"good":"")+'">'+esc(r.ai_severity)+'</span>':"";
-    return '<tr><td>'+date(r.created_at)+'</td><td>'+type+'</td><td>'+esc(r.carrera_nombre||"")+'</td><td>'+esc(r.area_name||"")+'</td><td>'+r.rating+'/5</td><td>'+esc((r.selected_issues||[]).join(", "))+'</td><td>'+sev+'<div class="detail">'+esc(r.ai_summary||"Pendiente")+'</div></td><td class="detail">'+esc(r.comment||"—")+'</td></tr>';
+    const categories=(r.ai_categories||[]).length?r.ai_categories:(r.selected_issues||[]);
+    return '<tr><td>'+date(r.created_at)+'</td><td>'+type+'</td><td>'+esc(r.carrera_nombre||"")+'</td><td>'+esc(r.area_name||"")+'</td><td>'+r.rating+'/5</td><td>'+esc(categories.join(", "))+'</td><td>'+sev+'<div class="detail">'+esc(r.ai_summary||"Pendiente")+'</div></td><td class="detail">'+esc(r.comment||"—")+'</td></tr>';
   }).join("");
 }
 
