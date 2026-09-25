@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Administrador · Satisfacción estudiantil · ITSQMET</title><link rel="stylesheet" href="../assets/styles.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Administrador · Satisfacción estudiantil · ITSQMET</title><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/styles.css"></head>
 <body>
 <div class="app-shell">
 <header class="topbar"><div class="brand">ITSQMET · Panel de satisfacción</div><small>Administrador</small></header>
@@ -8,6 +8,7 @@
   <div class="logo-banner"><div class="institution-logo" aria-label="Logo ITSQMET"></div></div>
   <section class="card login-box" id="loginBox">
     <span class="eyebrow">ACCESO ADMINISTRATIVO</span><h2>Panel de respuestas</h2><p class="muted">Ingresa la clave administrativa del sistema.</p>
+    <div id="backendStatus"></div>
     <form id="loginForm"><div class="field"><label for="adminKey">Clave</label><input id="adminKey" type="password" autocomplete="current-password" required></div><button class="btn primary" type="submit">Ingresar</button></form><div id="loginStatus"></div>
   </section>
   <div id="dashboard" class="hidden">
