@@ -1,0 +1,52 @@
+name: Validate application
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "validate-app"
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Check frontend JavaScript syntax
+        shell: bash
+        run: |
+          for file in assets/config.js assets/catalog.js assets/student.js assets/admin.js; do
+            node --input-type=module --check < "$file"
+          done
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+
+      - name: Bundle Neon Function
+        working-directory: backend
+        shell: bash
+        run: |
+          npx --yes esbuild@latest functions/survey.ts \
+            --bundle \
+            --platform=node \
+            --target=node24 \
+            --format=esm \
+            --banner:js="import{createRequire as ___cr}from'module';import{fileURLToPath as ___f}from'url';import{dirname as ___d}from'path';const require=___cr(import.meta.url);const __filename=___f(import.meta.url);const __dirname=___d(__filename);" \
+            --outfile=/tmp/survey.mjs
+
+      - name: Validate Neon configuration
+        working-directory: backend
+        run: npx --yes esbuild@latest neon.ts --bundle --platform=node --target=node24 --format=esm --outfile=/tmp/neon-config.mjs
