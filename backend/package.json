@@ -2,8 +2,12 @@
   "name": "satisfaccion-neon-backend",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@neon/ai-sdk-provider": "latest",
+    "@neon/config": "^1.6.0",
     "@neon/functions": "latest",
     "ai": "^7.0.0",
     "hono": "latest",
