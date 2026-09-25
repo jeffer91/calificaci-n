@@ -5,7 +5,11 @@ export default defineConfig({
   functions: {
     survey: {
       name: "Encuesta de satisfacción",
-      source: "./functions/survey.ts"
+      source: "./functions/survey.ts",
+      env: {
+        ADMIN_KEY: process.env.ADMIN_KEY ?? "",
+        HASH_PEPPER: process.env.HASH_PEPPER ?? ""
+      }
     }
   }
 });
