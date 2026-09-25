@@ -34,6 +34,13 @@ function clean(v: any, max = 2000) {
   return String(v ?? "").trim().slice(0, max);
 }
 
+function redactForAI(v: any) {
+  return clean(v, 2000)
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[correo]")
+    .replace(/\+?\d[\d\s().-]{7,}\d/g, "[telefono]")
+    .replace(/\b\d{10,13}\b/g, "[identificador]");
+}
+
 function experienceType(ev: any) {
   if (ev?.experienceType === "positive") return "positive";
   if (ev?.experienceType === "improvement") return "improvement";
@@ -225,7 +232,7 @@ async function analyze(ev: any) {
     "Calificación: " + String(ev.rating) + "/5",
     "Categorías marcadas por el estudiante: " + ev.issues.join(", "),
     "Resolución: " + ev.resolution,
-    "Comentario: " + ev.comment
+    "Comentario: " + redactForAI(ev.comment)
   ].join("\n");
 
   for (const model of ["gpt-oss-20b", "meta-llama-3-3-70b-instruct"]) {
