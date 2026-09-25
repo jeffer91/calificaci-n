@@ -416,10 +416,10 @@ app.get("/admin/summary", async (c) => {
         "SELECT area_key,area_name,count(*)::int count,avg(rating)::numeric(10,2) avg_rating,count(*) FILTER(WHERE experience_type='positive')::int positive_count,count(*) FILTER(WHERE experience_type='improvement')::int improvement_count FROM evaluations GROUP BY area_key,area_name ORDER BY count(*) DESC"
       ),
       pool.query(
-        "SELECT category AS issue,count(*)::int count FROM evaluations CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_array_length(ai_categories)>0 THEN ai_categories ELSE to_jsonb(selected_issues) END) category WHERE experience_type='positive' GROUP BY category ORDER BY count(*) DESC LIMIT 30"
+        "SELECT category AS issue,count(*)::int count FROM evaluations CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_array_length(ai_categories)>0 THEN ai_categories ELSE to_jsonb(selected_issues) END) AS cat(category) WHERE experience_type='positive' GROUP BY category ORDER BY count(*) DESC LIMIT 30"
       ),
       pool.query(
-        "SELECT category AS issue,count(*)::int count FROM evaluations CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_array_length(ai_categories)>0 THEN ai_categories ELSE to_jsonb(selected_issues) END) category WHERE experience_type='improvement' GROUP BY category ORDER BY count(*) DESC LIMIT 30"
+        "SELECT category AS issue,count(*)::int count FROM evaluations CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_array_length(ai_categories)>0 THEN ai_categories ELSE to_jsonb(selected_issues) END) AS cat(category) WHERE experience_type='improvement' GROUP BY category ORDER BY count(*) DESC LIMIT 30"
       )
     ]);
 
