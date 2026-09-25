@@ -10,6 +10,31 @@ function headers(){return {"X-Admin-Key":adminKey};}
 function api(path){return APP_CONFIG.apiBase.replace(/\/$/,"")+path;}
 function typeLabel(type){return type==="positive"?"Reconocimiento":type==="improvement"?"Por mejorar":"General";}
 
+async function checkBackend(){
+  if(!APP_CONFIG.apiBase){
+    status("backendStatus","warn","Neon todavía no está enlazado a esta interfaz.");
+    return false;
+  }
+  try{
+    const r=await fetch(api("/health"),{cache:"no-store"});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.ok&&j.database&&j.adminConfigured&&j.hashPepperConfigured){
+      status("backendStatus","ok","Neon conectado · base de datos y seguridad listas.");
+      return true;
+    }
+    if(r.ok&&j.database){
+      status("backendStatus","warn","Neon está conectado, pero faltan variables de seguridad del backend.");
+      return false;
+    }
+    status("backendStatus","error","El backend no pudo verificar la base de datos.");
+    return false;
+  }catch(_){
+    status("backendStatus","error","No se pudo conectar con el backend de Neon.");
+    return false;
+  }
+}
+checkBackend();
+
 $("loginForm").onsubmit=async e=>{e.preventDefault();adminKey=$("adminKey").value.trim();await load(true);};
 $("refreshBtn").onclick=()=>load(false);
 ["typeFilter","areaFilter","ratingFilter","severityFilter","searchFilter"].forEach(id=>{
@@ -74,13 +99,21 @@ function renderResponses(){
   const severity=$("severityFilter").value;
   const q=$("searchFilter").value.toLowerCase().trim();
 
-  const items=allResponses.filter(r=>
-    (!type||r.experience_type===type)&&
-    (!area||r.area_key===area)&&
-    (!rating||String(r.rating)===rating)&&
-    (!severity||r.ai_severity===severity)&&
-    (!q||String(r.comment||"").toLowerCase().includes(q)||String(r.ai_summary||"").toLowerCase().includes(q)||String(r.area_name||"").toLowerCase().includes(q))
-  );
+  const items=allResponses.filter(r=>{
+    const searchable=[
+      r.comment,
+      r.ai_summary,
+      r.area_name,
+      r.carrera_nombre,
+      ...(r.selected_issues||[]),
+      ...(r.ai_categories||[])
+    ].join(" ").toLowerCase();
+    return (!type||r.experience_type===type)&&
+      (!area||r.area_key===area)&&
+      (!rating||String(r.rating)===rating)&&
+      (!severity||r.ai_severity===severity)&&
+      (!q||searchable.includes(q));
+  });
 
   $("responseCount").textContent=items.length+" resultados";
   $("responseRows").innerHTML=items.map(r=>{
